@@ -1,0 +1,6 @@
+{
+  "name": "Fresh Ledger",
+  "description": "Kitchen management and financial tracking application featuring dashboard overview, sales reports, recipe calculators, and inventory tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
