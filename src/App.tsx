@@ -6,42 +6,53 @@ import SalesReportsScreen from './components/SalesReportsScreen';
 import RecipeCalculatorScreen from './components/RecipeCalculatorScreen';
 import InventoryScreen from './components/InventoryScreen';
 import NewEntryModal from './components/NewEntryModal';
+import LoginScreen from './components/LoginScreen';
 
-import { INITIAL_INGREDIENTS, INITIAL_RECIPES, INITIAL_SALES } from './data';
+import { useAuth } from './lib/AuthContext';
+import * as ingredientsService from './lib/db/ingredientsService';
+import * as recipesService from './lib/db/recipesService';
+import * as salesService from './lib/db/salesService';
+
 import { Ingredient, Recipe, SaleRecord } from './types';
 
 export default function App() {
+  const { session, loading: authLoading } = useAuth();
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
   const location = useLocation();
 
-  // Core Persistent State
-  const [ingredients, setIngredients] = useState<Ingredient[]>(() => {
-    const cached = localStorage.getItem('fresh_ledger_ingredients');
-    return cached ? JSON.parse(cached) : INITIAL_INGREDIENTS;
-  });
+  // Core state — loaded from Supabase
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [sales, setSales] = useState<SaleRecord[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
 
-  const [recipes, setRecipes] = useState<Recipe[]>(() => {
-    const cached = localStorage.getItem('fresh_ledger_recipes');
-    return cached ? JSON.parse(cached) : INITIAL_RECIPES;
-  });
-
-  const [sales, setSales] = useState<SaleRecord[]>(() => {
-    const cached = localStorage.getItem('fresh_ledger_sales');
-    return cached ? JSON.parse(cached) : INITIAL_SALES;
-  });
-
-  // Save states to local storage
+  // Load data once user is authenticated
   useEffect(() => {
-    localStorage.setItem('fresh_ledger_ingredients', JSON.stringify(ingredients));
-  }, [ingredients]);
+    if (!session) {
+      setIngredients([]);
+      setRecipes([]);
+      setSales([]);
+      setDataLoading(false);
+      return;
+    }
 
-  useEffect(() => {
-    localStorage.setItem('fresh_ledger_recipes', JSON.stringify(recipes));
-  }, [recipes]);
+    setDataLoading(true);
+    setDataError(null);
 
-  useEffect(() => {
-    localStorage.setItem('fresh_ledger_sales', JSON.stringify(sales));
-  }, [sales]);
+    Promise.all([
+      ingredientsService.getAll(),
+      recipesService.getAll(),
+      salesService.getAll(),
+    ])
+      .then(([ings, recs, sls]) => {
+        setIngredients(ings);
+        setRecipes(recs);
+        setSales(sls);
+      })
+      .catch(err => setDataError(err.message))
+      .finally(() => setDataLoading(false));
+  }, [session]);
 
   // Synchronize document titles with routing
   useEffect(() => {
@@ -59,114 +70,173 @@ export default function App() {
     }
   }, [location]);
 
-  // Handle data updates
-  const handleAddIngredient = (newIng: Omit<Ingredient, 'id'>) => {
-    const id = `ing_${Date.now()}`;
-    setIngredients(prev => [...prev, { ...newIng, id }]);
+  // --- Handlers (now async, calling services) ---------------
+
+  const handleAddIngredient = async (newIng: Omit<Ingredient, 'id'>) => {
+    const created = await ingredientsService.create(newIng);
+    setIngredients(prev => [...prev, created]);
   };
 
-  const handleUpdateIngredient = (updatedIng: Ingredient) => {
-    setIngredients(prev => prev.map(ing => ing.id === updatedIng.id ? updatedIng : ing));
+  const handleUpdateIngredient = async (updatedIng: Ingredient) => {
+    const { id, ...rest } = updatedIng;
+    const updated = await ingredientsService.update(id, rest);
+    setIngredients(prev => prev.map(ing => ing.id === updated.id ? updated : ing));
   };
 
-  const handleRemoveIngredient = (id: string) => {
+  const handleRemoveIngredient = async (id: string) => {
+    await ingredientsService.remove(id);
     setIngredients(prev => prev.filter(ing => ing.id !== id));
   };
 
-  const handleAddRecipe = (newRec: Omit<Recipe, 'id'>) => {
-    const id = `rec_${Date.now()}`;
-    setRecipes(prev => [...prev, { ...newRec, id }]);
+  const handleAddRecipe = async (newRec: Omit<Recipe, 'id'>) => {
+    const created = await recipesService.create(newRec);
+    setRecipes(prev => [...prev, created]);
   };
 
-  const handleUpdateRecipe = (updatedRec: Recipe) => {
-    setRecipes(prev => prev.map(rec => rec.id === updatedRec.id ? updatedRec : rec));
+  const handleUpdateRecipe = async (updatedRec: Recipe) => {
+    const { id, ...rest } = updatedRec;
+    const updated = await recipesService.update(id, rest);
+    setRecipes(prev => prev.map(rec => rec.id === updated.id ? updated : rec));
   };
 
-  const handleRemoveRecipe = (id: string) => {
+  const handleRemoveRecipe = async (id: string) => {
+    await recipesService.remove(id);
     setRecipes(prev => prev.filter(rec => rec.id !== id));
   };
 
-  const handleAddSale = (newSale: Omit<SaleRecord, 'id'>) => {
-    const id = `sale_${Date.now()}`;
-    setSales(prev => [
-      { ...newSale, id },
-      ...prev
-    ]);
+  const handleAddSale = async (newSale: Omit<SaleRecord, 'id'>) => {
+    const created = await salesService.create(newSale);
+    setSales(prev => [created, ...prev]);
   };
 
-  const handleRemoveSale = (id: string) => {
+  const handleRemoveSale = async (id: string) => {
+    await salesService.remove(id);
     setSales(prev => prev.filter(s => s.id !== id));
   };
+
+  // --- Auth loading state -----------------------------------
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0b1c30] mb-4 shadow-lg animate-pulse">
+            <span className="text-3xl">🌿</span>
+          </div>
+          <p className="text-sm text-[#64748b]">Loading Fresh Ledger...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Auth guard: show login if not authenticated ----------
+
+  if (!session) {
+    return <LoginScreen />;
+  }
+
+  // --- Data loading state -----------------------------------
+
+  if (dataLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0b1c30] mb-4 shadow-lg">
+            <span className="text-3xl">🌿</span>
+          </div>
+          <p className="text-sm text-[#64748b]">Loading your data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (dataError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+        <div className="max-w-md text-center px-4">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-[#0b1c30] mb-2">Failed to load data</h2>
+          <p className="text-sm text-[#64748b] mb-4">{dataError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-[#0b1c30] text-white rounded-xl text-sm font-medium hover:bg-[#1a3a5c] transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] antialiased">
       {/* Navigation sidebar */}
-      <Sidebar 
+      <Sidebar
         onOpenNewEntry={() => setIsNewEntryOpen(true)}
       />
 
       {/* Main viewport area */}
       <main className="lg:ml-[240px] p-4 md:p-8 pt-20 lg:pt-8 min-h-screen max-w-7xl mx-auto w-full">
         <Routes>
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <DashboardScreen 
+              <DashboardScreen
                 ingredients={ingredients}
                 recipes={recipes}
                 sales={sales}
               />
-            } 
+            }
           />
-          <Route 
-            path="/sales" 
+          <Route
+            path="/sales"
             element={
-              <SalesReportsScreen 
+              <SalesReportsScreen
                 sales={sales}
                 onAddSale={handleAddSale}
                 onRemoveSale={handleRemoveSale}
               />
-            } 
+            }
           />
-          <Route 
-            path="/recipes" 
+          <Route
+            path="/recipes"
             element={
-              <RecipeCalculatorScreen 
+              <RecipeCalculatorScreen
                 recipes={recipes}
                 ingredients={ingredients}
                 onUpdateRecipe={handleUpdateRecipe}
                 onRemoveRecipe={handleRemoveRecipe}
               />
-            } 
+            }
           />
-          <Route 
-            path="/recipes/:recipeId" 
+          <Route
+            path="/recipes/:recipeId"
             element={
-              <RecipeCalculatorScreen 
+              <RecipeCalculatorScreen
                 recipes={recipes}
                 ingredients={ingredients}
                 onUpdateRecipe={handleUpdateRecipe}
                 onRemoveRecipe={handleRemoveRecipe}
               />
-            } 
+            }
           />
-          <Route 
-            path="/inventory" 
+          <Route
+            path="/inventory"
             element={
-              <InventoryScreen 
+              <InventoryScreen
                 ingredients={ingredients}
                 onAddIngredient={handleAddIngredient}
                 onUpdateIngredient={handleUpdateIngredient}
                 onRemoveIngredient={handleRemoveIngredient}
               />
-            } 
+            }
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
       {/* Generic CTA modal wizard */}
-      <NewEntryModal 
+      <NewEntryModal
         isOpen={isNewEntryOpen}
         onClose={() => setIsNewEntryOpen(false)}
         onAddIngredient={handleAddIngredient}

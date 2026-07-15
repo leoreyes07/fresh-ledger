@@ -1,18 +1,18 @@
 import { Ingredient, Recipe, SaleRecord } from './types';
 
 export const INITIAL_INGREDIENTS: Ingredient[] = [
-  { id: '1', name: 'Bread Flour (High Protein)', category: 'Flour & Grains', stockLevel: 150, unit: 'kg', unitCost: 2.0 },
-  { id: '2', name: 'Filtered Water', category: 'Liquids', stockLevel: 500, unit: 'L', unitCost: 0.1 },
-  { id: '3', name: 'Active Sourdough Starter', category: 'Starters', stockLevel: 10, unit: 'kg', unitCost: 1.5 },
-  { id: '4', name: 'Fine Sea Salt', category: 'Spices & Seasonings', stockLevel: 15, unit: 'kg', unitCost: 5.0 },
-  { id: '5', name: 'Rice Flour (for dusting)', category: 'Flour & Grains', stockLevel: 20, unit: 'kg', unitCost: 3.0 },
-  { id: '6', name: 'Fresh Basil', category: 'Herbs', stockLevel: 2.5, unit: 'kg', unitCost: 12.0 },
-  { id: '7', name: 'Olive Oil (Extra Virgin)', category: 'Oils & Fats', stockLevel: 15, unit: 'L', unitCost: 8.5 },
-  { id: '8', name: 'Large Grade A Eggs', category: 'Dairy & Eggs', stockLevel: 12, unit: 'units', unitCost: 0.25 },
-  { id: '9', name: 'Beef Short Ribs', category: 'Meats', stockLevel: 25, unit: 'kg', unitCost: 18.0 },
-  { id: '10', name: 'Atlantic Salmon Fillet', category: 'Meats', stockLevel: 18, unit: 'kg', unitCost: 22.0 },
-  { id: '11', name: 'Arborio Rice', category: 'Flour & Grains', stockLevel: 40, unit: 'kg', unitCost: 4.5 },
-  { id: '12', name: 'Black Truffle Oil', category: 'Oils & Fats', stockLevel: 2, unit: 'L', unitCost: 95.0 }
+  { id: '1', name: 'Bread Flour (High Protein)', category: 'Flour & Grains', stockLevel: 150, unit: 'kg', unitCost: 2.0, yieldFactor: 1 },
+  { id: '2', name: 'Filtered Water', category: 'Liquids', stockLevel: 500, unit: 'L', unitCost: 0.1, yieldFactor: 1 },
+  { id: '3', name: 'Active Sourdough Starter', category: 'Starters', stockLevel: 10, unit: 'kg', unitCost: 1.5, yieldFactor: 1 },
+  { id: '4', name: 'Fine Sea Salt', category: 'Spices & Seasonings', stockLevel: 15, unit: 'kg', unitCost: 5.0, yieldFactor: 1 },
+  { id: '5', name: 'Rice Flour (for dusting)', category: 'Flour & Grains', stockLevel: 20, unit: 'kg', unitCost: 3.0, yieldFactor: 1 },
+  { id: '6', name: 'Fresh Basil', category: 'Herbs', stockLevel: 2.5, unit: 'kg', unitCost: 12.0, yieldFactor: 0.85 },
+  { id: '7', name: 'Olive Oil (Extra Virgin)', category: 'Oils & Fats', stockLevel: 15, unit: 'L', unitCost: 8.5, yieldFactor: 1 },
+  { id: '8', name: 'Large Grade A Eggs', category: 'Dairy & Eggs', stockLevel: 12, unit: 'units', unitCost: 0.25, yieldFactor: 1 },
+  { id: '9', name: 'Beef Short Ribs', category: 'Meats', stockLevel: 25, unit: 'kg', unitCost: 18.0, yieldFactor: 0.80 },
+  { id: '10', name: 'Atlantic Salmon Fillet', category: 'Meats', stockLevel: 18, unit: 'kg', unitCost: 22.0, yieldFactor: 0.90 },
+  { id: '11', name: 'Arborio Rice', category: 'Flour & Grains', stockLevel: 40, unit: 'kg', unitCost: 4.5, yieldFactor: 1 },
+  { id: '12', name: 'Black Truffle Oil', category: 'Oils & Fats', stockLevel: 2, unit: 'L', unitCost: 95.0, yieldFactor: 1 }
 ];
 
 export const INITIAL_RECIPES: Recipe[] = [
@@ -38,7 +38,8 @@ export const INITIAL_RECIPES: Recipe[] = [
       'Bake in Dutch oven at 450°F (20 mins covered, 20 mins uncovered).'
     ],
     targetMargin: 75,
-    laborOverheadPercent: 30
+    laborOverheadPercent: 30,
+    allergens: ['gluten'],
   },
   {
     id: 'ribs',
@@ -58,7 +59,8 @@ export const INITIAL_RECIPES: Recipe[] = [
       'Let rest, strain and reduce braising liquid to a glaze.'
     ],
     targetMargin: 68,
-    laborOverheadPercent: 25
+    laborOverheadPercent: 25,
+    allergens: [],
   },
   {
     id: 'salmon',
@@ -78,7 +80,8 @@ export const INITIAL_RECIPES: Recipe[] = [
       'Cook in water bath at 122°F (50°C) for 40 minutes, then sear skin if desired.'
     ],
     targetMargin: 62,
-    laborOverheadPercent: 20
+    laborOverheadPercent: 20,
+    allergens: ['fish'],
   },
   {
     id: 'risotto',
@@ -99,9 +102,11 @@ export const INITIAL_RECIPES: Recipe[] = [
       'Finish with butter, parmigiano-reggiano, and drizzle with truffle oil.'
     ],
     targetMargin: 55,
-    laborOverheadPercent: 25
+    laborOverheadPercent: 25,
+    allergens: ['gluten', 'eggs', 'dairy'],
   }
 ];
+
 
 export const INITIAL_SALES: SaleRecord[] = [
   { id: 's1', date: 'Oct 24, 2023', itemName: 'Truffle Risotto', quantity: 12, revenue: 336.00, cost: 84.00 },

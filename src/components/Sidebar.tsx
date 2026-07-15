@@ -1,7 +1,8 @@
 import React from 'react';
-import { LayoutDashboard, ClipboardList, Utensils, Settings, HelpCircle, Plus, Receipt } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, Utensils, Settings, HelpCircle, Plus, Receipt, LogOut } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useLanguage } from '../LanguageContext';
+import { useAuth } from '../lib/AuthContext';
 
 interface SidebarProps {
   onOpenNewEntry: (type?: 'sale' | 'ingredient' | 'recipe') => void;
@@ -9,6 +10,7 @@ interface SidebarProps {
 
 export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
   const { language, setLanguage, t } = useLanguage();
+  const { user, signOut } = useAuth();
   const location = useLocation();
 
   const navItems = [
@@ -93,13 +95,23 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
             <span>{t('nav.support')}</span>
           </a>
 
-          {/* Chef Julien Profile Card */}
+          {/* User Profile Card */}
           <div className="p-3 mt-2 bg-slate-800/40 rounded-2xl border border-slate-800/60 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white font-display">JD</div>
-            <div className="text-xs">
-              <p className="text-white font-semibold">{t('chef.name')}</p>
+            <div className="w-9 h-9 rounded-full bg-emerald-700 flex items-center justify-center text-xs font-bold text-white font-display">
+              {user?.email?.[0]?.toUpperCase() ?? '?'}
+            </div>
+            <div className="text-xs flex-1 min-w-0">
+              <p className="text-white font-semibold truncate">{user?.email ?? 'Admin'}</p>
               <p className="text-slate-500">{t('chef.role')}</p>
             </div>
+            <button
+              id="sidebar-signout"
+              onClick={signOut}
+              title="Sign out"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-all"
+            >
+              <LogOut size={15} />
+            </button>
           </div>
         </div>
       </nav>
@@ -113,9 +125,17 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
         <div className="flex items-center space-x-1">
           <button
             onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-            className="mr-2 px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold hover:text-white transition-all border border-slate-700/50 cursor-pointer"
+            className="mr-1 px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold hover:text-white transition-all border border-slate-700/50 cursor-pointer"
           >
             <span>{language === 'es' ? 'ES' : 'EN'}</span>
+          </button>
+          <button
+            id="mobile-signout"
+            onClick={signOut}
+            title="Sign out"
+            className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-all"
+          >
+            <LogOut size={18} />
           </button>
           {navItems.map((item) => {
             const Icon = item.icon;

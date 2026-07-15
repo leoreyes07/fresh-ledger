@@ -65,7 +65,8 @@ export default function NewEntryModal({ isOpen, onClose, onAddIngredient, onAddR
       category: ingCategory,
       stockLevel: Number(ingStock),
       unit: ingUnit,
-      unitCost: Number(ingCost)
+      unitCost: Number(ingCost),
+      yieldFactor: 1,
     });
     onClose();
   };
@@ -82,7 +83,8 @@ export default function NewEntryModal({ isOpen, onClose, onAddIngredient, onAddR
       ingredients: recipeIngredients,
       methodNotes: ['Combine ingredients.', 'Process, portion, and bake.'],
       targetMargin: 70,
-      laborOverheadPercent: 25
+      laborOverheadPercent: 25,
+      allergens: [],
     });
     // Reset recipe state
     setRecipeName('');

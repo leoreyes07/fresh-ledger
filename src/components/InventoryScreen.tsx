@@ -65,7 +65,8 @@ export default function InventoryScreen({
       category: editCategory,
       stockLevel: Number(editStockLevel),
       unit: editUnit,
-      unitCost: Number(editUnitCost)
+      unitCost: Number(editUnitCost),
+      yieldFactor: ingredients.find(i => i.id === id)?.yieldFactor ?? 1,
     });
     setEditingIngId(null);
   };
@@ -78,7 +79,8 @@ export default function InventoryScreen({
       category: newCategory,
       stockLevel: Number(newStockLevel),
       unit: newUnit,
-      unitCost: Number(newUnitCost)
+      unitCost: Number(newUnitCost),
+      yieldFactor: 1,
     });
     // Reset Form
     setNewName('');
