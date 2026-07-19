@@ -78,14 +78,17 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
         </div>
 
         <div className="mt-auto pt-4 border-t border-slate-800/80 px-2 space-y-1.5">
-          <a
-            href="#settings"
-            onClick={(e) => { e.preventDefault(); }}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all rounded-xl"
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => 
+              `flex items-center gap-3 px-4 py-2.5 text-sm transition-all rounded-xl ${
+                isActive ? 'bg-emerald-500/10 text-emerald-400 font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+              }`
+            }
           >
             <Settings size={18} className="text-slate-500" />
             <span>{t('nav.settings')}</span>
-          </a>
+          </NavLink>
           <a
             href="#support"
             onClick={(e) => { e.preventDefault(); }}

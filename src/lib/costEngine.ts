@@ -129,13 +129,31 @@ export function priceFromMarginTarget(portionCost: number, targetMargin: number)
 }
 
 /**
- * Charm pricing: rounds raw price to the nearest .95 or .50.
- * Example: $9.73 -> $9.95 | $12.20 -> $12.50
+ * Charm pricing: rounds raw price based on settings.
+ * Default is nearest .95 or .50.
  */
-export function charmPrice(raw: number): number {
+export function charmPrice(raw: number, settings?: any): number {
+  if (!settings?.pricing?.rounding_enabled) return raw;
+  
+  const method = settings?.pricing?.rounding_method || 'nearest';
+  const roundTo = settings?.pricing?.round_to || 0.50;
+  
+  // Basic implementation of dynamic rounding
+  // Using roundTo (e.g. 0.50, 0.95, 1.00)
   const floor = Math.floor(raw);
   const decimal = raw - floor;
-
+  
+  if (method === 'ceil') {
+    return Math.ceil(raw / roundTo) * roundTo;
+  } else if (method === 'floor') {
+    return Math.floor(raw / roundTo) * roundTo;
+  }
+  
+  // nearest (custom charm pricing logic based on common values)
+  if (roundTo === 0.95) {
+    return floor + 0.95;
+  }
+  
   if (decimal <= 0.5) {
     return floor + (decimal <= 0.25 ? 0.25 : 0.5);
   } else {
@@ -185,13 +203,17 @@ export function computeRecipeMetrics(
   recipe: Recipe,
   allIngredients: Ingredient[],
   allRecipes: Recipe[],
+  settings?: any
 ): RecipeMetrics {
   const totalCost = recipeTotalCost(recipe, allIngredients, allRecipes);
   const cpp = costPerPortion(recipe, allIngredients, allRecipes);
   const salePrice = recipe.salePrice ?? 0;
 
-  const fcPct = recipe.targetFoodCostPercent ?? 30;
-  const marginPct = recipe.targetMargin ?? 70;
+  const defaultFcPct = settings?.pricing?.default_target_food_cost ?? 30;
+  const defaultMarginPct = settings?.pricing?.default_target_margin ?? 70;
+
+  const fcPct = recipe.targetFoodCostPercent ?? defaultFcPct;
+  const marginPct = recipe.targetMargin ?? defaultMarginPct;
 
   const suggestedFC = priceFromFoodCostTarget(cpp, fcPct);
   const suggestedMargin = priceFromMarginTarget(cpp, marginPct);
@@ -203,7 +225,7 @@ export function computeRecipeMetrics(
     marginPct: profitMarginPercent(cpp, salePrice),
     suggestedPriceFC: suggestedFC,
     suggestedPriceMargin: suggestedMargin,
-    charmPriceFC: charmPrice(suggestedFC),
-    charmPriceMargin: charmPrice(suggestedMargin),
+    charmPriceFC: charmPrice(suggestedFC, settings),
+    charmPriceMargin: charmPrice(suggestedMargin, settings),
   };
 }

@@ -7,6 +7,7 @@ import RecipeCalculatorScreen from './components/RecipeCalculatorScreen';
 import InventoryScreen from './components/InventoryScreen';
 import NewEntryModal from './components/NewEntryModal';
 import LoginScreen from './components/LoginScreen';
+import SettingsScreen from './components/SettingsScreen';
 
 import { useAuth } from './lib/AuthContext';
 import * as ingredientsService from './lib/db/ingredientsService';
@@ -231,6 +232,7 @@ export default function App() {
               />
             }
           />
+          <Route path="/settings" element={<SettingsScreen />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

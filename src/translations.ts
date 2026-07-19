@@ -182,6 +182,20 @@ export const translations = {
     'recipe.editIngredients': 'Editar Ingredientes',
     'recipe.saveChanges': 'Guardar Cambios',
 
+    // Settings Screen
+    'settings.title': 'Ajustes',
+    'settings.sub': 'Configura las reglas globales para tu negocio.',
+    'settings.currencyFormat': 'Moneda y Formato',
+    'settings.currencySymbol': 'Símbolo de Moneda',
+    'settings.marginsCost': 'Márgenes y Food Cost (Por Defecto)',
+    'settings.targetMargin': 'Margen Objetivo (%)',
+    'settings.maxFoodCost': 'Food Cost Máximo (%)',
+    'settings.dontForget': 'No olvides guardar los cambios.',
+    'settings.saveBtn': 'Guardar Ajustes',
+    'settings.saving': 'Guardando...',
+    'settings.saveSuccess': 'Configuraciones guardadas con éxito',
+    'settings.loading': 'Cargando configuraciones...',
+
     // Categories translation (Display on screen)
     'cat.Flour & Grains': 'Harinas y Granos',
     'cat.Liquids': 'Líquidos',
@@ -420,6 +434,20 @@ export const translations = {
     'recipe.manageIngredients': 'Manage Ingredients',
     'recipe.editIngredients': 'Edit Ingredients',
     'recipe.saveChanges': 'Save Changes',
+
+    // Settings Screen
+    'settings.title': 'Settings',
+    'settings.sub': 'Configure global rules for your business.',
+    'settings.currencyFormat': 'Currency and Format',
+    'settings.currencySymbol': 'Currency Symbol',
+    'settings.marginsCost': 'Margins & Food Cost (Default)',
+    'settings.targetMargin': 'Target Margin (%)',
+    'settings.maxFoodCost': 'Max Food Cost (%)',
+    'settings.dontForget': 'Don\'t forget to save changes.',
+    'settings.saveBtn': 'Save Settings',
+    'settings.saving': 'Saving...',
+    'settings.saveSuccess': 'Settings saved successfully',
+    'settings.loading': 'Loading settings...',
 
     // Categories translation (Display on screen)
     'cat.Flour & Grains': 'Flour & Grains',

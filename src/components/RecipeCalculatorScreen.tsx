@@ -3,6 +3,7 @@ import { ArrowLeft, Printer, Info, Save, CheckCircle2, AlertTriangle, Trash2, Pl
 import { Recipe, Ingredient, RecipeIngredient } from '../types';
 import { useLanguage } from '../LanguageContext';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSettings } from '../lib/SettingsContext';
 
 interface RecipeCalculatorScreenProps {
   recipes: Recipe[];
@@ -24,8 +25,12 @@ export default function RecipeCalculatorScreen({
   // Find currently active recipe or default to artisanal sourdough
   const activeRecipe = recipes.find(r => r.id === recipeId) || recipes.find(r => r.id === 'sourdough') || recipes[0];
 
+  const { settings } = useSettings();
+  const currencySymbol = settings.currency?.symbol || '$';
+  const defaultTargetMargin = settings.pricing?.default_target_margin || 70;
+
   const [batchScale, setBatchScale] = useState(1); // multiplier for batch scaling
-  const [targetMargin, setTargetMargin] = useState(activeRecipe ? activeRecipe.targetMargin : 75);
+  const [targetMargin, setTargetMargin] = useState(activeRecipe ? activeRecipe.targetMargin : defaultTargetMargin);
   const [laborOverhead, setLaborOverhead] = useState(activeRecipe ? activeRecipe.laborOverheadPercent : 30);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -164,12 +169,10 @@ export default function RecipeCalculatorScreen({
   const laborOverheadAmount = totalFoodCost * (laborOverhead / 100);
   const totalLandedCost = totalFoodCost + laborOverheadAmount;
 
-  // Recommended selling price calculation:
-  const recommendedPrice = activeRecipe.id === 'sourdough' 
-    ? (9.00 * (targetMargin / 75) * batchScale) / batchScale
-    : (costPerLoafUnit * 3) * (targetMargin / 50);
+  // Recommended selling price calculation using target margin formula
+  const recommendedPrice = totalLandedCost / (1 - (targetMargin / 100)) || 0;
 
-  const calculatedProfit = recommendedPrice - (totalLandedCost / (activeRecipe ? activeRecipe.yieldAmount * batchScale : 1));
+  const calculatedProfit = recommendedPrice - totalLandedCost;
 
   const handleStepToggle = (index: number) => {
     if (completedSteps.includes(index)) {
@@ -488,10 +491,10 @@ export default function RecipeCalculatorScreen({
                             {item.quantity.toLocaleString(language === 'es' ? 'es-ES' : 'en-US', { maximumFractionDigits: 3 })} {translateUnit(item.unit)}
                           </td>
                           <td className="py-4 px-6 text-right text-sm text-slate-400 font-mono">
-                            ${item.unitCost.toFixed(3)} / {translateUnit(item.unit)}
+                            {currencySymbol}{item.unitCost.toFixed(3)} / {translateUnit(item.unit)}
                           </td>
                           <td className="py-4 px-6 text-right text-sm font-bold text-slate-900 font-mono">
-                            ${item.totalCost.toFixed(2)}
+                            {currencySymbol}{item.totalCost.toFixed(2)}
                           </td>
                         </tr>
                       ))}
@@ -503,7 +506,7 @@ export default function RecipeCalculatorScreen({
                   <div className="flex items-center gap-4">
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('recipe.totalRawCost')}</span>
                     <span className="text-3xl font-black text-slate-900 font-display">
-                      ${totalFoodCost.toFixed(2)}
+                      {currencySymbol}{totalFoodCost.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -554,19 +557,19 @@ export default function RecipeCalculatorScreen({
                 <div className="bg-slate-50 rounded-2xl p-4.5 border border-slate-100 space-y-3">
                   <div className="flex justify-between items-center text-xs font-semibold">
                     <span className="text-slate-500">{t('recipe.totalBatchCost').replace('{units}', (activeRecipe.yieldAmount * batchScale).toString())}</span>
-                    <span className="font-bold text-slate-800 font-mono">${totalFoodCost.toFixed(2)}</span>
+                    <span className="font-bold text-slate-800 font-mono">{currencySymbol}{totalFoodCost.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-slate-150 text-xs font-semibold">
                     <span className="text-slate-800 font-bold">{t('recipe.costPerUnit')}</span>
-                    <span className="font-extrabold text-slate-900 font-mono">${costPerLoafUnit.toFixed(2)}</span>
+                    <span className="font-extrabold text-slate-900 font-mono">{currencySymbol}{costPerLoafUnit.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs font-semibold pt-1">
                     <span className="text-slate-500">{t('recipe.laborOverhead').replace('{percent}', laborOverhead.toString())}</span>
-                    <span className="font-bold text-rose-600 font-mono">+${laborOverheadAmount.toFixed(2)}</span>
+                    <span className="font-bold text-rose-600 font-mono">+{currencySymbol}{laborOverheadAmount.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center mt-2 pt-3 border-t border-slate-150 text-xs font-bold text-slate-800">
                     <span>{t('recipe.totalLandedCost')}</span>
-                    <span className="font-mono">${totalLandedCost.toFixed(2)}</span>
+                    <span className="font-mono">{currencySymbol}{totalLandedCost.toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -587,7 +590,7 @@ export default function RecipeCalculatorScreen({
                   <div className="flex justify-between text-[11px] font-bold text-slate-400">
                     <span>{t('recipe.industryAverage')}</span>
                     <button 
-                      onClick={() => setTargetMargin(75)}
+                      onClick={() => setTargetMargin(defaultTargetMargin)}
                       className="text-emerald-600 hover:underline cursor-pointer"
                     >
                       {t('recipe.resetTarget')}
@@ -601,13 +604,13 @@ export default function RecipeCalculatorScreen({
                     {t('recipe.recommendedSellingPrice')}
                   </span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black font-display">${recommendedPrice.toFixed(2)}</span>
+                    <span className="text-3xl font-black font-display">{currencySymbol}{recommendedPrice.toFixed(2)}</span>
                     <span className="text-xs text-emerald-100 font-medium">/ {t('recipe.unitUnit')}</span>
                   </div>
                   <div className="mt-3.5 flex justify-between items-center text-xs border-t border-emerald-500/50 pt-3">
                     <span className="text-emerald-100 font-medium">{t('recipe.calculatedProfit')}</span>
                     <span className="font-bold text-emerald-300 text-sm">
-                      +${calculatedProfit.toFixed(2)} / {t('recipe.unitUnit')}
+                      +{currencySymbol}{calculatedProfit.toFixed(2)} / {t('recipe.unitUnit')}
                     </span>
                   </div>
                 </div>
