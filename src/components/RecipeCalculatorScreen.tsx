@@ -4,6 +4,7 @@ import { Recipe, Ingredient, RecipeIngredient } from '../types';
 import { useLanguage } from '../LanguageContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSettings } from '../lib/SettingsContext';
+import { useCurrency } from '../lib/CurrencyContext';
 
 interface RecipeCalculatorScreenProps {
   recipes: Recipe[];
@@ -21,12 +22,12 @@ export default function RecipeCalculatorScreen({
   const { recipeId } = useParams<{ recipeId?: string }>();
   const navigate = useNavigate();
   const { language, t, translateItem, translateCategory, translateUnit, translateStep } = useLanguage();
+  const { format } = useCurrency();
 
   // Find currently active recipe or default to artisanal sourdough
   const activeRecipe = recipes.find(r => r.id === recipeId) || recipes.find(r => r.id === 'sourdough') || recipes[0];
 
   const { settings } = useSettings();
-  const currencySymbol = settings.currency?.symbol || '$';
   const defaultTargetMargin = settings.pricing?.default_target_margin || 70;
 
   const [batchScale, setBatchScale] = useState(1); // multiplier for batch scaling
@@ -491,10 +492,10 @@ export default function RecipeCalculatorScreen({
                             {item.quantity.toLocaleString(language === 'es' ? 'es-ES' : 'en-US', { maximumFractionDigits: 3 })} {translateUnit(item.unit)}
                           </td>
                           <td className="py-4 px-6 text-right text-sm text-slate-400 font-mono">
-                            {currencySymbol}{item.unitCost.toFixed(3)} / {translateUnit(item.unit)}
+                            {format(item.unitCost)} / {translateUnit(item.unit)}
                           </td>
                           <td className="py-4 px-6 text-right text-sm font-bold text-slate-900 font-mono">
-                            {currencySymbol}{item.totalCost.toFixed(2)}
+                            {format(item.totalCost)}
                           </td>
                         </tr>
                       ))}
@@ -506,7 +507,7 @@ export default function RecipeCalculatorScreen({
                   <div className="flex items-center gap-4">
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('recipe.totalRawCost')}</span>
                     <span className="text-3xl font-black text-slate-900 font-display">
-                      {currencySymbol}{totalFoodCost.toFixed(2)}
+                      {format(totalFoodCost)}
                     </span>
                   </div>
                 </div>
@@ -557,19 +558,19 @@ export default function RecipeCalculatorScreen({
                 <div className="bg-slate-50 rounded-2xl p-4.5 border border-slate-100 space-y-3">
                   <div className="flex justify-between items-center text-xs font-semibold">
                     <span className="text-slate-500">{t('recipe.totalBatchCost').replace('{units}', (activeRecipe.yieldAmount * batchScale).toString())}</span>
-                    <span className="font-bold text-slate-800 font-mono">{currencySymbol}{totalFoodCost.toFixed(2)}</span>
+                    <span className="font-bold text-slate-800 font-mono">{format(totalFoodCost)}</span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-slate-150 text-xs font-semibold">
                     <span className="text-slate-800 font-bold">{t('recipe.costPerUnit')}</span>
-                    <span className="font-extrabold text-slate-900 font-mono">{currencySymbol}{costPerLoafUnit.toFixed(2)}</span>
+                    <span className="font-extrabold text-slate-900 font-mono">{format(costPerLoafUnit)}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs font-semibold pt-1">
                     <span className="text-slate-500">{t('recipe.laborOverhead').replace('{percent}', laborOverhead.toString())}</span>
-                    <span className="font-bold text-rose-600 font-mono">+{currencySymbol}{laborOverheadAmount.toFixed(2)}</span>
+                    <span className="font-bold text-rose-600 font-mono">+{format(laborOverheadAmount)}</span>
                   </div>
                   <div className="flex justify-between items-center mt-2 pt-3 border-t border-slate-150 text-xs font-bold text-slate-800">
                     <span>{t('recipe.totalLandedCost')}</span>
-                    <span className="font-mono">{currencySymbol}{totalLandedCost.toFixed(2)}</span>
+                    <span className="font-mono">{format(totalLandedCost)}</span>
                   </div>
                 </div>
 
@@ -604,13 +605,13 @@ export default function RecipeCalculatorScreen({
                     {t('recipe.recommendedSellingPrice')}
                   </span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black font-display">{currencySymbol}{recommendedPrice.toFixed(2)}</span>
+                    <span className="text-3xl font-black font-display">{format(recommendedPrice)}</span>
                     <span className="text-xs text-emerald-100 font-medium">/ {t('recipe.unitUnit')}</span>
                   </div>
                   <div className="mt-3.5 flex justify-between items-center text-xs border-t border-emerald-500/50 pt-3">
                     <span className="text-emerald-100 font-medium">{t('recipe.calculatedProfit')}</span>
                     <span className="font-bold text-emerald-300 text-sm">
-                      +{currencySymbol}{calculatedProfit.toFixed(2)} / {t('recipe.unitUnit')}
+                      +{format(calculatedProfit)} / {t('recipe.unitUnit')}
                     </span>
                   </div>
                 </div>

@@ -25,7 +25,7 @@ export default function LoginScreen() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0b1c30] mb-4 shadow-lg">
             <span className="text-3xl">🌿</span>
           </div>
-          <h1 className="text-3xl font-bold text-[#0b1c30] tracking-tight">Fresh Ledger</h1>
+          <h1 className="text-3xl font-bold text-[#0b1c30] tracking-tight">Mi negocio</h1>
           <p className="text-sm text-[#64748b] mt-1">Kitchen cost management</p>
         </div>
 
@@ -99,7 +99,7 @@ export default function LoginScreen() {
         </div>
 
         <p className="text-center text-xs text-[#9ca3af] mt-6">
-          Fresh Ledger - Kitchen Management System
+          Mi negocio - Kitchen Management System
         </p>
       </div>
     </div>

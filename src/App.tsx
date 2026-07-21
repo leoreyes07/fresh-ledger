@@ -10,6 +10,7 @@ import LoginScreen from './components/LoginScreen';
 import SettingsScreen from './components/SettingsScreen';
 
 import { useAuth } from './lib/AuthContext';
+import { useSettings } from './lib/SettingsContext';
 import * as ingredientsService from './lib/db/ingredientsService';
 import * as recipesService from './lib/db/recipesService';
 import * as salesService from './lib/db/salesService';
@@ -18,6 +19,9 @@ import { Ingredient, Recipe, SaleRecord } from './types';
 
 export default function App() {
   const { session, loading: authLoading } = useAuth();
+  const { settings } = useSettings();
+  const businessName = settings?.ui?.business_name || 'Mi negocio';
+  
   const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
   const location = useLocation();
 
@@ -59,17 +63,17 @@ export default function App() {
   useEffect(() => {
     const path = location.pathname;
     if (path === '/' || path.startsWith('/dashboard')) {
-      document.title = 'Dashboard - Fresh Ledger';
+      document.title = `Dashboard - ${businessName}`;
     } else if (path.startsWith('/sales')) {
-      document.title = 'Sales Reports - Fresh Ledger';
+      document.title = `Sales Reports - ${businessName}`;
     } else if (path.startsWith('/recipes')) {
-      document.title = 'Recipe Calculator - Fresh Ledger';
+      document.title = `Recipe Calculator - ${businessName}`;
     } else if (path.startsWith('/inventory')) {
-      document.title = 'Inventory - Fresh Ledger';
+      document.title = `Inventory - ${businessName}`;
     } else {
-      document.title = 'Fresh Ledger';
+      document.title = businessName;
     }
-  }, [location]);
+  }, [location, businessName]);
 
   // --- Handlers (now async, calling services) ---------------
 

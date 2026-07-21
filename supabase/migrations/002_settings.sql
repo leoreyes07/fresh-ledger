@@ -18,7 +18,7 @@ CREATE POLICY "Authenticated users: full access" ON settings
 
 -- Default Settings
 INSERT INTO settings (key, value) VALUES
-  ('currency', '{"code": "NIO", "symbol": "C$", "decimal_places": 2, "thousand_separator": ",", "decimal_separator": "."}'),
+  ('currency', '{"base_currency": "NIO", "exchange_rate": 36.62, "decimal_places": 2, "thousand_separator": ",", "decimal_separator": "."}'),
   ('pricing', '{"default_target_food_cost": 30, "default_target_margin": 70, "rounding_enabled": true, "rounding_method": "nearest", "round_to": 0.50}'),
   ('taxes', '{"enabled": false, "tax_rate": 15}'),
   ('units', '{"default_weight_unit": "g", "default_volume_unit": "ml", "allow_unit_conversion": true}'),

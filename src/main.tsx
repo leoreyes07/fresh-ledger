@@ -5,6 +5,7 @@ import { LanguageProvider } from './LanguageContext';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './lib/AuthContext';
 import { SettingsProvider } from './lib/SettingsContext';
+import { CurrencyProvider } from './lib/CurrencyContext';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -12,9 +13,11 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <SettingsProvider>
         <LanguageProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <CurrencyProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </CurrencyProvider>
         </LanguageProvider>
       </SettingsProvider>
     </AuthProvider>

@@ -7,9 +7,11 @@ export default function SettingsScreen() {
   const { settings, updateSetting, loading } = useSettings();
   const { t } = useLanguage();
 
-  const [currencySymbol, setCurrencySymbol] = useState(settings?.currency?.symbol || 'C$');
+  const [baseCurrency, setBaseCurrency] = useState(settings?.currency?.base_currency || 'NIO');
+  const [exchangeRate, setExchangeRate] = useState(settings?.currency?.exchange_rate || 36.62);
   const [defaultFoodCost, setDefaultFoodCost] = useState(settings?.pricing?.default_target_food_cost || 30);
   const [defaultMargin, setDefaultMargin] = useState(settings?.pricing?.default_target_margin || 70);
+  const [businessName, setBusinessName] = useState(settings?.ui?.business_name || 'Mi negocio');
   
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -21,7 +23,14 @@ export default function SettingsScreen() {
     // update currency
     await updateSetting('currency', {
       ...settings.currency,
-      symbol: currencySymbol
+      base_currency: baseCurrency,
+      exchange_rate: exchangeRate
+    });
+
+    // update general ui (business name)
+    await updateSetting('ui', {
+      ...settings.ui,
+      business_name: businessName
     });
 
     // update pricing
@@ -49,17 +58,47 @@ export default function SettingsScreen() {
 
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 space-y-6">
         
+        {/* General */}
+        <div>
+          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">General</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Nombre del Negocio</label>
+              <input
+                type="text"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                placeholder="Mi negocio"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Moneda */}
         <div>
           <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">{t('settings.currencyFormat')}</h3>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">{t('settings.currencySymbol')}</label>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Moneda Base</label>
+              <select
+                value={baseCurrency}
+                onChange={(e) => setBaseCurrency(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+              >
+                <option value="NIO">Córdobas (NIO)</option>
+                <option value="USD">Dólares (USD)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Tasa de Cambio (1 USD = X NIO)</label>
               <input
-                type="text"
-                value={currencySymbol}
-                onChange={(e) => setCurrencySymbol(e.target.value)}
-                className="w-full max-w-[200px] bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                type="number"
+                min="1"
+                step="0.01"
+                value={exchangeRate}
+                onChange={(e) => setExchangeRate(Number(e.target.value))}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
               />
             </div>
           </div>

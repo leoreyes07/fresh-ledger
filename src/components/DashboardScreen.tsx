@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, MoreVertical, TrendingUp, ArrowRight, DollarSign, Percent, ShoppingBag, Layers, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Ingredient, Recipe, SaleRecord } from '../types';
 import { useLanguage } from '../LanguageContext';
+import { useCurrency } from '../lib/CurrencyContext';
 import { useNavigate } from 'react-router-dom';
 
 interface DashboardScreenProps {
@@ -13,6 +14,7 @@ interface DashboardScreenProps {
 export default function DashboardScreen({ ingredients, recipes, sales }: DashboardScreenProps) {
   const navigate = useNavigate();
   const { language, t, translateItem } = useLanguage();
+  const { format } = useCurrency();
   const [selectedTimeframe, setSelectedTimeframe] = useState<'today' | 'week' | 'month'>('week');
 
   // Dynamic calculations
@@ -30,20 +32,20 @@ export default function DashboardScreen({ ingredients, recipes, sales }: Dashboa
 
   // Daily profit totals for custom bar chart (Monday to Friday)
   const chartData = [
-    { day: language === 'es' ? 'LUN' : 'MON', value: 450, label: '$450' },
-    { day: language === 'es' ? 'MAR' : 'TUE', value: 650, label: '$650' },
-    { day: language === 'es' ? 'MIÉ' : 'WED', value: 950, label: '$950', highlighted: true },
-    { day: language === 'es' ? 'JUE' : 'THU', value: 550, label: '$550' },
-    { day: language === 'es' ? 'VIE' : 'FRI', value: 750, label: '$750' }
+    { day: language === 'es' ? 'LUN' : 'MON', value: 450, label: format(450) },
+    { day: language === 'es' ? 'MAR' : 'TUE', value: 650, label: format(650) },
+    { day: language === 'es' ? 'MIÉ' : 'WED', value: 950, label: format(950), highlighted: true },
+    { day: language === 'es' ? 'JUE' : 'THU', value: 550, label: format(550) },
+    { day: language === 'es' ? 'VIE' : 'FRI', value: 750, label: format(750) }
   ];
 
   const maxChartValue = Math.max(...chartData.map(d => d.value));
 
   // Top recipes data mapping
   const topRecipesList = [
-    { code: 'BR', name: 'Braised Ribs', margin: '68%', revenue: '$850', status: 'High Profit', recipeId: 'ribs', colorClass: 'bg-[#ffddb8] text-[#523200]' },
-    { code: 'SV', name: 'Sous Vide Salmon', margin: '62%', revenue: '$620', status: 'High Profit', recipeId: 'salmon', colorClass: 'bg-emerald-100 text-emerald-800' },
-    { code: 'TR', name: 'Truffle Risotto', margin: '55%', revenue: '$430', status: 'Steady', recipeId: 'risotto', colorClass: 'bg-[#e5eeff] text-[#0b1c30]' }
+    { code: 'BR', name: 'Braised Ribs', margin: '68%', revenue: format(850), status: 'High Profit', recipeId: 'ribs', colorClass: 'bg-[#ffddb8] text-[#523200]' },
+    { code: 'SV', name: 'Sous Vide Salmon', margin: '62%', revenue: format(620), status: 'High Profit', recipeId: 'salmon', colorClass: 'bg-emerald-100 text-emerald-800' },
+    { code: 'TR', name: 'Truffle Risotto', margin: '55%', revenue: format(430), status: 'Steady', recipeId: 'risotto', colorClass: 'bg-[#e5eeff] text-[#0b1c30]' }
   ];
 
   // Dynamic formatted date
@@ -90,7 +92,7 @@ export default function DashboardScreen({ ingredients, recipes, sales }: Dashboa
             <div>
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t('dash.weeklyRev')}</h3>
               <p className="text-4xl font-black text-slate-900 font-display">
-                ${totalSalesVal.toLocaleString(language === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {format(totalSalesVal)}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -224,7 +226,7 @@ export default function DashboardScreen({ ingredients, recipes, sales }: Dashboa
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-bold text-emerald-600 block leading-tight">+${sale.revenue.toFixed(2)}</span>
+                    <span className="text-sm font-bold text-emerald-600 block leading-tight">+{format(sale.revenue)}</span>
                     <span className="text-[10px] text-slate-400">{t('dash.qty')}: {sale.quantity}</span>
                   </div>
                 </div>
@@ -253,7 +255,7 @@ export default function DashboardScreen({ ingredients, recipes, sales }: Dashboa
                   <p className="text-sm font-bold text-emerald-400 mt-1">70% {t('dash.netMargin')}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold font-mono text-emerald-400">$6.37 {language === 'es' ? 'Beneficio' : 'Profit'}</p>
+                  <p className="text-2xl font-bold font-mono text-emerald-400">{format(6.37)} {language === 'es' ? 'Beneficio' : 'Profit'}</p>
                   <p className="text-xs text-slate-500">{t('dash.perUnit')}</p>
                 </div>
               </div>
@@ -320,7 +322,7 @@ export default function DashboardScreen({ ingredients, recipes, sales }: Dashboa
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">{t('dash.assetValue')}</span>
                 <span className="text-2xl font-extrabold text-emerald-600 font-display block mt-1.5">
-                  ${totalInventoryValue.toLocaleString(language === 'es' ? 'es-ES' : 'en-US', { maximumFractionDigits: 0 })}
+                  {format(totalInventoryValue)}
                 </span>
               </div>
             </div>

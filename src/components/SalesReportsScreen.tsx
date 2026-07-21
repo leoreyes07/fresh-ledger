@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Download, Search, ChevronLeft, ChevronRight, TrendingUp, DollarSign, Percent, Star, Plus, Trash2 } from 'lucide-react';
 import { SaleRecord } from '../types';
 import { useLanguage } from '../LanguageContext';
+import { useCurrency } from '../lib/CurrencyContext';
 
 interface SalesReportsScreenProps {
   sales: SaleRecord[];
@@ -11,6 +12,7 @@ interface SalesReportsScreenProps {
 
 export default function SalesReportsScreen({ sales, onAddSale, onRemoveSale }: SalesReportsScreenProps) {
   const { language, t, translateItem } = useLanguage();
+  const { format } = useCurrency();
   const [searchTerm, setSearchTerm] = useState('');
   const [timeframe, setTimeframe] = useState('This Month (Oct)');
   const [currentPage, setCurrentPage] = useState(1);
@@ -317,8 +319,8 @@ export default function SalesReportsScreen({ sales, onAddSale, onRemoveSale }: S
                       <td className="py-4 px-6 text-sm text-slate-600 font-medium whitespace-nowrap">{item.date}</td>
                       <td className="py-4 px-6 text-sm text-slate-900 font-extrabold font-sans">{translateItem(item.itemName)}</td>
                       <td className="py-4 px-6 text-sm text-slate-800 text-right font-semibold font-mono">{item.quantity}</td>
-                      <td className="py-4 px-6 text-sm text-slate-900 text-right font-extrabold font-mono">${item.revenue.toFixed(2)}</td>
-                      <td className="py-4 px-6 text-sm text-slate-500 text-right font-medium font-mono">${item.cost.toFixed(2)}</td>
+                      <td className="py-4 px-6 text-sm text-slate-900 text-right font-extrabold font-mono">{format(item.revenue)}</td>
+                      <td className="py-4 px-6 text-sm text-slate-500 text-right font-medium font-mono">{format(item.cost)}</td>
                       <td className="py-4 px-6 text-sm text-emerald-600 text-right font-extrabold font-mono">{marginPct.toFixed(1)}%</td>
                       <td className="py-4 px-6 text-center">
                         <button 
