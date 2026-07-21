@@ -5,7 +5,7 @@
 
 -- Ingredients
 CREATE TABLE IF NOT EXISTS ingredients (
-  id                  TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name                TEXT NOT NULL,
   category            TEXT NOT NULL,
   stock_level         NUMERIC NOT NULL DEFAULT 0,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS ingredient_price_history (
 
 -- Recipes
 CREATE TABLE IF NOT EXISTS recipes (
-  id                       TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  id                       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name                     TEXT NOT NULL,
   category                 TEXT NOT NULL,
   prep_time                TEXT,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS recipe_ingredients (
 
 -- Sales
 CREATE TABLE IF NOT EXISTS sales (
-  id         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   date       TEXT NOT NULL,
   item_name  TEXT NOT NULL,
   quantity   NUMERIC NOT NULL,
