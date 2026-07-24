@@ -18,20 +18,20 @@ export default function LoginScreen() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+    <div className="min-h-screen flex items-center justify-center bg-app">
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0b1c30] mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-main mb-4 shadow-lg">
             <span className="text-3xl">🌿</span>
           </div>
-          <h1 className="text-3xl font-bold text-[#0b1c30] tracking-tight">Mi negocio</h1>
+          <h1 className="text-3xl font-bold text-main tracking-tight">Mi negocio</h1>
           <p className="text-sm text-[#64748b] mt-1">Kitchen cost management</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-[#e8ecf0] p-8">
-          <h2 className="text-xl font-semibold text-[#0b1c30] mb-6">Sign in to your account</h2>
+        <div className="bg-surface rounded-2xl shadow-sm border border-[#e8ecf0] p-8">
+          <h2 className="text-xl font-semibold text-main mb-6">Sign in to your account</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -49,7 +49,7 @@ export default function LoginScreen() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="chef@restaurant.com"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#d1d5db] text-[#0b1c30] text-sm
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#d1d5db] text-main text-sm
                            placeholder:text-[#9ca3af] bg-[#f9fafb]
                            focus:outline-none focus:ring-2 focus:ring-[#0b1c30] focus:border-transparent
                            transition-all duration-200"
@@ -71,7 +71,7 @@ export default function LoginScreen() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#d1d5db] text-[#0b1c30] text-sm
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#d1d5db] text-main text-sm
                            placeholder:text-[#9ca3af] bg-[#f9fafb]
                            focus:outline-none focus:ring-2 focus:ring-[#0b1c30] focus:border-transparent
                            transition-all duration-200"
@@ -89,7 +89,7 @@ export default function LoginScreen() {
               id="login-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-xl bg-[#0b1c30] text-white font-semibold text-sm
+              className="w-full py-2.5 px-4 rounded-xl bg-main text-white font-semibold text-sm
                          hover:bg-[#1a3a5c] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed
                          transition-all duration-200 shadow-sm mt-2"
             >

@@ -11,11 +11,11 @@ import SettingsScreen from './components/SettingsScreen';
 
 import { useAuth } from './lib/AuthContext';
 import { useSettings } from './lib/SettingsContext';
-import * as ingredientsService from './lib/db/ingredientsService';
-import * as recipesService from './lib/db/recipesService';
+import * as inventoryService from './lib/db/inventoryService';
+import * as menuItemsService from './lib/db/menuItemsService';
 import * as salesService from './lib/db/salesService';
 
-import { Ingredient, Recipe, SaleRecord } from './types';
+import { InventoryItem, MenuItem, SaleRecord } from './types';
 
 export default function App() {
   const { session, loading: authLoading } = useAuth();
@@ -26,8 +26,8 @@ export default function App() {
   const location = useLocation();
 
   // Core state — loaded from Supabase
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [ingredients, setIngredients] = useState<InventoryItem[]>([]);
+  const [recipes, setRecipes] = useState<MenuItem[]>([]);
   const [sales, setSales] = useState<SaleRecord[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
@@ -46,8 +46,8 @@ export default function App() {
     setDataError(null);
 
     Promise.all([
-      ingredientsService.getAll(),
-      recipesService.getAll(),
+      inventoryService.getAll(),
+      menuItemsService.getAll(),
       salesService.getAll(),
     ])
       .then(([ings, recs, sls]) => {
@@ -67,7 +67,7 @@ export default function App() {
     } else if (path.startsWith('/sales')) {
       document.title = `Sales Reports - ${businessName}`;
     } else if (path.startsWith('/recipes')) {
-      document.title = `Recipe Calculator - ${businessName}`;
+      document.title = `MenuItem Calculator - ${businessName}`;
     } else if (path.startsWith('/inventory')) {
       document.title = `Inventory - ${businessName}`;
     } else {
@@ -77,35 +77,35 @@ export default function App() {
 
   // --- Handlers (now async, calling services) ---------------
 
-  const handleAddIngredient = async (newIng: Omit<Ingredient, 'id'>) => {
-    const created = await ingredientsService.create(newIng);
+  const handleAddIngredient = async (newIng: Omit<InventoryItem, 'id'>) => {
+    const created = await inventoryService.create(newIng);
     setIngredients(prev => [...prev, created]);
   };
 
-  const handleUpdateIngredient = async (updatedIng: Ingredient) => {
+  const handleUpdateIngredient = async (updatedIng: InventoryItem) => {
     const { id, ...rest } = updatedIng;
-    const updated = await ingredientsService.update(id, rest);
+    const updated = await inventoryService.update(id, rest);
     setIngredients(prev => prev.map(ing => ing.id === updated.id ? updated : ing));
   };
 
   const handleRemoveIngredient = async (id: string) => {
-    await ingredientsService.remove(id);
+    await inventoryService.remove(id);
     setIngredients(prev => prev.filter(ing => ing.id !== id));
   };
 
-  const handleAddRecipe = async (newRec: Omit<Recipe, 'id'>) => {
-    const created = await recipesService.create(newRec);
+  const handleAddRecipe = async (newRec: Omit<MenuItem, 'id'>) => {
+    const created = await menuItemsService.create(newRec);
     setRecipes(prev => [...prev, created]);
   };
 
-  const handleUpdateRecipe = async (updatedRec: Recipe) => {
+  const handleUpdateRecipe = async (updatedRec: MenuItem) => {
     const { id, ...rest } = updatedRec;
-    const updated = await recipesService.update(id, rest);
+    const updated = await menuItemsService.update(id, rest);
     setRecipes(prev => prev.map(rec => rec.id === updated.id ? updated : rec));
   };
 
   const handleRemoveRecipe = async (id: string) => {
-    await recipesService.remove(id);
+    await menuItemsService.remove(id);
     setRecipes(prev => prev.filter(rec => rec.id !== id));
   };
 
@@ -123,12 +123,12 @@ export default function App() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+      <div className="min-h-screen flex items-center justify-center bg-app">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0b1c30] mb-4 shadow-lg animate-pulse">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-surface mb-4 shadow-lg animate-pulse">
             <span className="text-3xl">🌿</span>
           </div>
-          <p className="text-sm text-[#64748b]">Loading Fresh Ledger...</p>
+          <p className="text-sm text-subtle">Loading Fresh Ledger...</p>
         </div>
       </div>
     );
@@ -144,12 +144,12 @@ export default function App() {
 
   if (dataLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+      <div className="min-h-screen flex items-center justify-center bg-app">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0b1c30] mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-surface mb-4 shadow-lg">
             <span className="text-3xl">🌿</span>
           </div>
-          <p className="text-sm text-[#64748b]">Loading your data...</p>
+          <p className="text-sm text-subtle">Loading your data...</p>
         </div>
       </div>
     );
@@ -157,14 +157,14 @@ export default function App() {
 
   if (dataError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff]">
+      <div className="min-h-screen flex items-center justify-center bg-app">
         <div className="max-w-md text-center px-4">
           <div className="text-4xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-[#0b1c30] mb-2">Failed to load data</h2>
-          <p className="text-sm text-[#64748b] mb-4">{dataError}</p>
+          <h2 className="text-xl font-semibold text-main mb-2">Failed to load data</h2>
+          <p className="text-sm text-subtle mb-4">{dataError}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-[#0b1c30] text-white rounded-xl text-sm font-medium hover:bg-[#1a3a5c] transition-colors"
+            className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-hover transition-colors"
           >
             Retry
           </button>
@@ -174,7 +174,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] antialiased">
+    <div className="min-h-screen bg-app text-main antialiased transition-colors duration-200">
       {/* Navigation sidebar */}
       <Sidebar
         onOpenNewEntry={() => setIsNewEntryOpen(true)}

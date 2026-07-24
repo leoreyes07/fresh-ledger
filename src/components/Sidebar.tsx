@@ -1,10 +1,11 @@
 import React from 'react';
-import { LayoutDashboard, ClipboardList, Utensils, Settings, HelpCircle, Plus, Receipt, LogOut, Leaf } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, Utensils, Settings, HelpCircle, Plus, Receipt, LogOut, Leaf, Moon, Sun } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useLanguage } from '../LanguageContext';
 import { useAuth } from '../lib/AuthContext';
 import { useSettings } from '../lib/SettingsContext';
 import { useCurrency } from '../lib/CurrencyContext';
+import { useTheme } from '../lib/ThemeContext';
 
 interface SidebarProps {
   onOpenNewEntry: (type?: 'sale' | 'ingredient' | 'recipe') => void;
@@ -15,6 +16,7 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
   const { user, signOut } = useAuth();
   const { settings } = useSettings();
   const { displayCurrency, toggleDisplayCurrency } = useCurrency();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
   const businessName = settings?.ui?.business_name || 'Mi negocio';
@@ -38,7 +40,7 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-[15px] font-bold text-white tracking-tight font-display truncate">{businessName}</h1>
-            <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider truncate">{t('brand.sub')}</p>
+            <p className="text-[10px] text-subtle font-semibold uppercase tracking-wider truncate">{t('brand.sub')}</p>
           </div>
         </div>
 
@@ -67,10 +69,10 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-sm font-medium ${
                   isActive
                     ? 'bg-emerald-500/10 text-emerald-400 font-semibold'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+                    : 'text-subtle hover:text-white hover:bg-slate-800/80'
                 }`}
               >
-                <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-500'} />
+                <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-subtle'} />
                 <span>{item.label}</span>
               </NavLink>
             );
@@ -80,6 +82,12 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
         <div className="mt-auto pt-4 border-t border-slate-800/80 px-2 space-y-1.5">
           {/* Utility Buttons */}
           <div className="flex gap-2 px-2 mb-3">
+            <button
+              onClick={toggleTheme}
+              className="flex-1 flex items-center justify-center py-2 rounded-lg bg-emerald-900/30 text-emerald-400 text-[11px] font-bold hover:text-white hover:bg-emerald-800 transition-all border border-emerald-800/30 cursor-pointer"
+            >
+              {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            </button>
             <button
               onClick={toggleDisplayCurrency}
               className="flex-1 flex items-center justify-center py-2 rounded-lg bg-emerald-900/30 text-emerald-400 text-[11px] font-bold hover:text-white hover:bg-emerald-800 transition-all border border-emerald-800/30 cursor-pointer"
@@ -98,19 +106,19 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
             to="/settings"
             className={({ isActive }) => 
               `flex items-center gap-3 px-4 py-2.5 text-sm transition-all rounded-xl ${
-                isActive ? 'bg-emerald-500/10 text-emerald-400 font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800/80'
+                isActive ? 'bg-emerald-500/10 text-emerald-400 font-semibold' : 'text-subtle hover:text-white hover:bg-slate-800/80'
               }`
             }
           >
-            <Settings size={18} className="text-slate-500" />
+            <Settings size={18} className="text-subtle" />
             <span>{t('nav.settings')}</span>
           </NavLink>
           <a
             href="#support"
             onClick={(e) => { e.preventDefault(); }}
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all rounded-xl"
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-subtle hover:text-white hover:bg-slate-800/80 transition-all rounded-xl"
           >
-            <HelpCircle size={18} className="text-slate-500" />
+            <HelpCircle size={18} className="text-subtle" />
             <span>{t('nav.support')}</span>
           </a>
 
@@ -121,13 +129,13 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
             </div>
             <div className="text-xs flex-1 min-w-0">
               <p className="text-white font-semibold truncate">{user?.email ?? 'Admin'}</p>
-              <p className="text-slate-500">{t('chef.role')}</p>
+              <p className="text-subtle">{t('chef.role')}</p>
             </div>
             <button
               id="sidebar-signout"
               onClick={signOut}
               title="Sign out"
-              className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-700 transition-all"
+              className="p-1.5 rounded-lg text-subtle hover:text-red-400 hover:bg-slate-700 transition-all"
             >
               <LogOut size={15} />
             </button>
@@ -145,6 +153,12 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
         </div>
         <div className="flex items-center space-x-2 shrink-0">
           <button
+            onClick={toggleTheme}
+            className="px-2.5 py-1.5 rounded-xl bg-emerald-900/50 text-emerald-400 text-[10px] font-bold hover:text-white transition-all border border-emerald-800/50 cursor-pointer flex items-center justify-center"
+          >
+            {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+          <button
             onClick={toggleDisplayCurrency}
             className="px-2.5 py-1.5 rounded-xl bg-emerald-900/50 text-emerald-400 text-[10px] font-bold hover:text-white transition-all border border-emerald-800/50 cursor-pointer"
           >
@@ -159,7 +173,7 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
           <button
             id="mobile-signout"
             onClick={signOut}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-all ml-1"
+            className="p-1.5 rounded-xl text-subtle hover:text-red-400 hover:bg-slate-800 transition-all ml-1"
           >
             <LogOut size={16} />
           </button>
@@ -180,7 +194,7 @@ export default function Sidebar({ onOpenNewEntry }: SidebarProps) {
               className={`flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all ${
                 isActive
                   ? 'text-emerald-400'
-                  : 'text-slate-500 hover:text-slate-300'
+                  : 'text-subtle hover:text-slate-300'
               }`}
             >
               <Icon size={20} className={isActive ? 'mb-1' : ''} />

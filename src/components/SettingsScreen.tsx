@@ -46,29 +46,29 @@ export default function SettingsScreen() {
   };
 
   if (loading) {
-    return <div className="p-8 text-slate-500">{t('settings.loading')}</div>;
+    return <div className="p-8 text-subtle">{t('settings.loading')}</div>;
   }
 
   return (
     <div className="space-y-8 animate-fade-in pb-12 max-w-2xl mx-auto">
       <div>
-        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight font-display mb-2">{t('settings.title')}</h2>
-        <p className="text-slate-500 font-medium">{t('settings.sub')}</p>
+        <h2 className="text-4xl font-extrabold text-main tracking-tight font-display mb-2">{t('settings.title')}</h2>
+        <p className="text-subtle font-medium">{t('settings.sub')}</p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 space-y-6">
+      <div className="bg-surface rounded-3xl border border-border shadow-sm p-6 space-y-6">
         
         {/* General */}
         <div>
-          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">General</h3>
+          <h3 className="text-sm font-bold text-main uppercase tracking-wider mb-4 border-b border-border pb-2">General</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Nombre del Negocio</label>
+              <label className="block text-[11px] font-bold text-subtle uppercase mb-1">Nombre del Negocio</label>
               <input
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                className="w-full bg-surface-hover border border-border rounded-xl p-2.5 text-sm font-bold text-main outline-none focus:border-emerald-500"
                 placeholder="Mi negocio"
               />
             </div>
@@ -77,28 +77,28 @@ export default function SettingsScreen() {
 
         {/* Moneda */}
         <div>
-          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">{t('settings.currencyFormat')}</h3>
+          <h3 className="text-sm font-bold text-main uppercase tracking-wider mb-4 border-b border-border pb-2">{t('settings.currencyFormat')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Moneda Base</label>
+              <label className="block text-[11px] font-bold text-subtle uppercase mb-1">Moneda Base</label>
               <select
                 value={baseCurrency}
                 onChange={(e) => setBaseCurrency(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                className="w-full bg-surface-hover border border-border rounded-xl p-2.5 text-sm font-bold text-main outline-none focus:border-emerald-500"
               >
                 <option value="NIO">Córdobas (NIO)</option>
                 <option value="USD">Dólares (USD)</option>
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Tasa de Cambio (1 USD = X NIO)</label>
+              <label className="block text-[11px] font-bold text-subtle uppercase mb-1">Tasa de Cambio (1 USD = X NIO)</label>
               <input
                 type="number"
                 min="1"
                 step="0.01"
                 value={exchangeRate}
                 onChange={(e) => setExchangeRate(Number(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                className="w-full bg-surface-hover border border-border rounded-xl p-2.5 text-sm font-bold text-main outline-none focus:border-emerald-500"
               />
             </div>
           </div>
@@ -106,39 +106,39 @@ export default function SettingsScreen() {
 
         {/* Costos y Márgenes */}
         <div>
-          <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">{t('settings.marginsCost')}</h3>
+          <h3 className="text-sm font-bold text-main uppercase tracking-wider mb-4 border-b border-border pb-2">{t('settings.marginsCost')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">{t('settings.targetMargin')}</label>
+              <label className="block text-[11px] font-bold text-subtle uppercase mb-1">{t('settings.targetMargin')}</label>
               <input
                 type="number"
                 min="1"
                 max="99"
                 value={defaultMargin}
                 onChange={(e) => setDefaultMargin(Number(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                className="w-full bg-surface-hover border border-border rounded-xl p-2.5 text-sm font-bold text-main outline-none focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">{t('settings.maxFoodCost')}</label>
+              <label className="block text-[11px] font-bold text-subtle uppercase mb-1">{t('settings.maxFoodCost')}</label>
               <input
                 type="number"
                 min="1"
                 max="99"
                 value={defaultFoodCost}
                 onChange={(e) => setDefaultFoodCost(Number(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-800 outline-none focus:border-emerald-500"
+                className="w-full bg-surface-hover border border-border rounded-xl p-2.5 text-sm font-bold text-main outline-none focus:border-emerald-500"
               />
             </div>
           </div>
         </div>
 
         {/* Acciones */}
-        <div className="pt-4 flex items-center justify-between border-t border-slate-100">
+        <div className="pt-4 flex items-center justify-between border-t border-border">
           {saveMessage ? (
             <span className="text-sm font-bold text-emerald-600">{saveMessage}</span>
           ) : (
-            <span className="text-sm text-slate-400 font-medium">{t('settings.dontForget')}</span>
+            <span className="text-sm text-subtle font-medium">{t('settings.dontForget')}</span>
           )}
 
           <button
@@ -146,7 +146,7 @@ export default function SettingsScreen() {
             disabled={isSaving}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-all active:scale-95 cursor-pointer ${
               isSaving 
-                ? 'bg-slate-100 text-slate-400'
+                ? 'bg-surface-alt text-subtle'
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white'
             }`}
           >
