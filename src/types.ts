@@ -1,58 +1,48 @@
 // ============================================================
-// Core domain types for Fresh Ledger
+// Core domain types for Retail Ice Cream Costing
 // ============================================================
 
-export interface Ingredient {
+export type InventoryCategory = 'Ice Cream Tub' | 'Packaging' | 'Topping' | 'Other';
+
+export interface InventoryItem {
   id: string;
   name: string;
-  category: string;
+  category: InventoryCategory;
   stockLevel: number;
-  unit: string;
-  unitCost: number;
+  unit: 'gallons' | 'units' | 'oz' | 'lbs';
+  unitCost: number;       // The total cost to purchase the unit (e.g., $35 for a tub)
+  volume: number;         // E.g., 2.5 for a 2.5-gallon tub. 1 for packaging.
+  /** 0.0 to 1.0 — ratio of usable product after waste/trimming. Default 0.95 for tubs. */
+  yieldFactor: number;
   // Extended fields
   supplier?: string;
   lastPurchaseDate?: string;
-  purchaseUnit?: string;
-  qtyPerPackage?: number;
-  /** 0.0 to 1.0 — ratio of usable product after waste/trimming. Default 1. */
-  yieldFactor: number;
 }
 
 export interface PriceRecord {
   id: number;
-  ingredientId: string;
+  inventoryItemId: string;
   price: number;
   recordedAt: string;
 }
 
-export interface RecipeIngredient {
+export interface MenuComponent {
   id?: number;
-  recipeId?: string;
-  /** One of ingredientId or subRecipeId must be set */
-  ingredientId?: string;
-  /** Reference to another recipe used as a component */
-  subRecipeId?: string;
-  quantity: number;
+  menuItemId?: string;
+  inventoryItemId: string;
+  quantity: number; // For Ice Cream: in fl oz (scoop size). For Packaging: in units.
 }
 
-export interface Recipe {
+export interface MenuItem {
   id: string;
-  name: string;
+  name: string;              // e.g., "Double Scoop Waffle Cone"
   category: string;
-  prepTime: string;
-  yieldAmount: number;
-  yieldUnit: string;
-  ingredients: RecipeIngredient[];
-  methodNotes: string[];
-  targetMargin: number;       // e.g. 75 for 75%
-  laborOverheadPercent: number; // e.g. 30 for 30%
+  components: MenuComponent[];
+  targetMargin: number;      // e.g., 70 for 70%
   // Extended fields
   description?: string;
   allergens: string[];
-  portionSize?: number;
-  portionUnit?: string;
-  targetFoodCostPercent?: number;
-  salePrice?: number;
+  salePrice?: number;        // Explicit override. If undefined, calculate suggested price
 }
 
 export interface SaleRecord {
